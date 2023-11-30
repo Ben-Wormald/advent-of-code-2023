@@ -1,4 +1,4 @@
-use reqwest::{blocking::Client, header::{COOKIE, HeaderMap, HeaderValue}};
+use reqwest::{blocking::Client, header::{COOKIE, HeaderMap, HeaderValue, USER_AGENT}};
 use std::{env, fs::{read_to_string, File}, io::Write};
 
 const URL: &str = "https://adventofcode.com";
@@ -39,6 +39,10 @@ fn get_client() -> Client {
     headers.insert(
         COOKIE,
         HeaderValue::from_str(&session_cookie).unwrap(),
+    );
+    headers.insert(
+        USER_AGENT,
+        HeaderValue::from_static("https://github.com/Ben-Wormald/advent-of-code-2023"),
     );
 
     Client::builder()
