@@ -1,8 +1,8 @@
-pub fn solve_part_one(input: &str) -> String {
+pub fn solve_part_one(input: &str) -> usize {
     todo!()
 }
 
-pub fn solve_part_two(input: &str) -> String {
+pub fn solve_part_two(input: &str) -> usize {
     todo!()
 }
 
@@ -14,14 +14,14 @@ mod tests {
 
     #[test]
     fn part_one() {
-        let expected = "";
+        let expected = 0;
 
         assert_eq!(solve_part_one(INPUT), expected);
     }
 
     #[test]
     fn part_two() {
-        let expected = "";
+        let expected = 0;
 
         assert_eq!(solve_part_two(INPUT), expected);
     }
