@@ -1,7 +1,7 @@
 pub fn solve_part_one(input: &str) -> usize {
-    input.lines().into_iter()
+    input.lines()
         .fold(0, |sum, line| {
-            let digits = line.chars().into_iter()
+            let digits = line.chars()
                 .filter(|c| c.is_numeric())
                 .map(|d| d.to_string().parse().unwrap())
                 .collect::<Vec<usize>>();
@@ -18,7 +18,7 @@ pub fn solve_part_one(input: &str) -> usize {
 const WORDS: [&str; 9] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
 
 pub fn solve_part_two(input: &str) -> usize {
-    input.lines().into_iter()
+    input.lines()
         .fold(0, |sum, line| {
             let mut digit_one: Option<usize> = None;
             let mut digit_two: Option<usize> = None;
