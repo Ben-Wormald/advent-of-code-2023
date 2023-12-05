@@ -1,0 +1,92 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'advent-of-code-2023' --part 1",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=advent-of-code-2023",
+          "--package=advent-of-code-2023"
+        ],
+        "filter": {
+          "name": "advent-of-code-2023",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "--part",
+        "1"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug executable 'advent-of-code-2023' --part 2",
+      "cargo": {
+        "args": [
+          "build",
+          "--bin=advent-of-code-2023",
+          "--package=advent-of-code-2023"
+        ],
+        "filter": {
+          "name": "advent-of-code-2023",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "--part",
+        "2"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'advent-of-code-2023' part_one",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=advent-of-code-2023",
+          "--package=advent-of-code-2023"
+        ],
+        "filter": {
+          "name": "advent-of-code-2023",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "part_one"
+      ],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug unit tests in executable 'advent-of-code-2023' part_two",
+      "cargo": {
+        "args": [
+          "test",
+          "--no-run",
+          "--bin=advent-of-code-2023",
+          "--package=advent-of-code-2023"
+        ],
+        "filter": {
+          "name": "advent-of-code-2023",
+          "kind": "bin"
+        }
+      },
+      "args": [
+        "part_two"
+      ],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
