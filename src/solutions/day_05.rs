@@ -17,7 +17,7 @@ impl Almanac {
             .map(|seed| seed.parse::<usize>().unwrap())
             .collect::<Vec<usize>>();
 
-        let maps = maps.into_iter().map(|map| {
+        let maps = maps.iter().map(|map| {
             let lines = map.lines().collect::<Vec<&str>>();
 
             let (types, ranges) = lines.split_at(1);
@@ -26,7 +26,7 @@ impl Almanac {
             let (source, destination) = types.split_once("-to-").unwrap();
             let (source, destination) = (source.to_string(), destination.to_string());
 
-            let ranges = ranges.into_iter()
+            let ranges = ranges.iter()
                 .map(|range| range
                     .split_whitespace()
                     .map(|n| n.parse::<usize>().unwrap())
@@ -92,7 +92,7 @@ pub fn solve_part_two(input: &str) -> usize {
     almanac.seeds
         .chunks(2)
         .flat_map(|pair| {
-            let start = pair.get(0).unwrap();
+            let start = pair.first().unwrap();
             let len = pair.get(1).unwrap();
             let range = *start..(start + len);
 
