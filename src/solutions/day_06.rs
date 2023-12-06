@@ -12,10 +12,7 @@ pub fn solve_part_one(input: &str) -> usize {
     }).product()
 }
 
-fn parse_line<T>(line: Option<&str>) -> Vec<T> where
-    T: str::FromStr,
-    <T as str::FromStr>::Err: fmt::Debug,
-{
+fn parse_line<T>(line: Option<&str>) -> Vec<T> where T: str::FromStr, T::Err: fmt::Debug {
     line.unwrap()
         .split_whitespace()
         .skip(1)
@@ -32,8 +29,8 @@ fn get_roots(t: usize, d: usize) -> (f64, f64) {
 
 pub fn solve_part_two(input: &str) -> usize {
     let mut lines = input.lines();
-    let time = parse_line::<String>(lines.next()).join("").parse::<usize>().unwrap();
-    let distance = parse_line::<String>(lines.next()).join("").parse::<usize>().unwrap();
+    let time = parse_line::<String>(lines.next()).join("").parse().unwrap();
+    let distance = parse_line::<String>(lines.next()).join("").parse().unwrap();
 
     let (r1, r2) = get_roots(time, distance);
     let (r1, r2) = (r1.floor() as isize + 1, r2.ceil() as isize - 1);
