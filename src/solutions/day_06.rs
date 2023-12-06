@@ -20,8 +20,8 @@ fn parse_line<T>(line: Option<&str>) -> Vec<T> where T: str::FromStr, T::Err: fm
         .collect()
 }
 
-fn get_roots(t: usize, d: usize) -> (f64, f64) {
-    let (t, d) = (t as f64, d as f64);
+fn get_roots(time: usize, distance: usize) -> (f64, f64) {
+    let (t, d) = (time as f64, distance as f64);
     let r1 = (-t + (t.powf(2.0) - 4.0 * d).sqrt()) / -2.0;
     let r2 = (-t - (t.powf(2.0) - 4.0 * d).sqrt()) / -2.0;
     (r1, r2)
