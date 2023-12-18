@@ -37,16 +37,13 @@ impl Grid {
             let neighbour = Pos::new(pos.row - 1, pos.col);
             let (tile, visited) = &self.tiles[neighbour.row][neighbour.col];
 
-            match (current, tile) {
-                (
-                    Tile::Start | Tile::NS | Tile::NE | Tile::NW,
-                    Tile::NS | Tile::SE | Tile::SW,
-                ) => {
-                    if !visited {
-                        connected = Some(neighbour);
-                    }
-                },
-                _ => (),
+            if let (
+                Tile::Start | Tile::NS | Tile::NE | Tile::NW,
+                Tile::NS | Tile::SE | Tile::SW,
+            ) = (current, tile) {
+                if !visited {
+                    connected = Some(neighbour);
+                }
             }
         }
 
@@ -55,16 +52,13 @@ impl Grid {
             let neighbour = Pos::new(pos.row + 1, pos.col);
             let (tile, visited) = &self.tiles[neighbour.row][neighbour.col];
 
-            match (current, tile) {
-                (
-                    Tile::Start | Tile::NS | Tile::SE | Tile::SW,
-                    Tile::NS | Tile::NE | Tile::NW,
-                ) => {
-                    if !visited {
-                        connected = Some(neighbour);
-                    }
-                },
-                _ => (),
+            if let (
+                Tile::Start | Tile::NS | Tile::SE | Tile::SW,
+                Tile::NS | Tile::NE | Tile::NW,
+            ) = (current, tile) {
+                if !visited {
+                    connected = Some(neighbour);
+                }
             }
         }
 
@@ -73,16 +67,13 @@ impl Grid {
             let neighbour = Pos::new(pos.row, pos.col - 1);
             let (tile, visited) = &self.tiles[neighbour.row][neighbour.col];
 
-            match (current, tile) {
-                (
-                    Tile::Start | Tile::EW | Tile::NW | Tile::SW,
-                    Tile::EW | Tile::NE | Tile::SE,
-                ) => {
-                    if !visited {
-                        connected = Some(neighbour);
-                    }
-                },
-                _ => (),
+            if let (
+                Tile::Start | Tile::EW | Tile::NW | Tile::SW,
+                Tile::EW | Tile::NE | Tile::SE,
+            ) = (current, tile) {
+                if !visited {
+                    connected = Some(neighbour);
+                }
             }
         }
 
@@ -91,33 +82,44 @@ impl Grid {
             let neighbour = Pos::new(pos.row, pos.col + 1);
             let (tile, visited) = &self.tiles[neighbour.row][neighbour.col];
 
-            match (current, tile) {
-                (
-                    Tile::Start | Tile::EW | Tile::NE | Tile::SE,
-                    Tile::EW | Tile::NW | Tile::SW,
-                ) => {
-                    if !visited {
-                        connected = Some(neighbour);
-                    }
-                },
-                _ => (),
+            if let (
+                Tile::Start | Tile::EW | Tile::NE | Tile::SE,
+                Tile::EW | Tile::NW | Tile::SW,
+            ) = (current, tile) {
+                if !visited {
+                    connected = Some(neighbour);
+                }
             }
         }
 
         connected
     }
 
-    fn pad(&mut self) {
-        for row in self.tiles.iter_mut() {
-            row.insert(0, (Tile::Ground, false));
-            row.push((Tile::Ground, false));
+    fn get_start_tile(&self, first: Pos, last: Pos) -> Tile {
+        let (fr, lr, fc, lc, sr, sc) = (
+            first.row as isize,
+            last.row as isize,
+            first.col as isize,
+            last.col as isize,
+            self.start.row as isize,
+            self.start.col as isize,
+        );
+
+        if fr == lr {
+            Tile::EW
+        } else if fc == lc {
+            Tile::NS
+        } else if (fr == sr - 1 && lc == sc - 1) || (lr == sr - 1 && fc == sc - 1) {
+            Tile::NW
+        } else if (fr == sr + 1 && lc == sc - 1) || (lr == sr + 1 && fc == sc - 1) {
+            Tile::SW
+        } else if (fr == sr - 1 && lc == sc + 1) || (lr == sr - 1 && fc == sc + 1) {
+            Tile::NE
+        } else if (fr == sr + 1 && lc == sc + 1) || (lr == sr + 1 && fc == sc + 1) {
+            Tile::SE
+        } else {
+            panic!()
         }
-
-        self.tiles.insert(0, vec![(Tile::Ground, false); self.tiles[0].len()]);
-        self.tiles.push(vec![(Tile::Ground, false); self.tiles[0].len()]);
-
-        self.start.row += 1;
-        self.start.col += 1;
     }
 }
 
@@ -132,7 +134,7 @@ impl Pos {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum Tile {
     NS,
     EW,
@@ -173,17 +175,62 @@ pub fn solve_part_one(input: &str) -> usize {
     (moves + 1) / 2
 }
 
+#[derive(Clone, Copy, Debug)]
+enum State {
+    Outside,
+    Inside,
+    EnteringN,
+    EnteringS,
+    ExitingN,
+    ExitingS,
+}
+
 pub fn solve_part_two(input: &str) -> usize {
     let mut grid = Grid::new(input);
-    grid.pad();
 
     let mut current = grid.next_tile(&grid.start.clone()).unwrap();
+    let first_tile = current.clone();
 
     while let Some(next) = grid.next_tile(&current) {
         current = next;
     }
+
+    let start_tile = grid.get_start_tile(first_tile, current);
+
+    let mut state = State::Outside;
+    let mut count = 0;
     
-    0
+    for row in grid.tiles.into_iter() {
+        for (mut tile, on_loop) in row.into_iter() {
+            if let Tile::Start = tile {
+                tile = start_tile.clone();
+            }
+            if !on_loop {
+                tile = Tile::Ground;
+            }
+
+            match (state, tile) {
+                (State::Outside, Tile::NS) => state = State::Inside,
+                (State::Outside, Tile::NE) => state = State::EnteringN,
+                (State::Outside, Tile::SE) => state = State::EnteringS,
+                (State::Inside, Tile::NS) => state = State::Outside,
+                (State::Inside, Tile::NE) => state = State::ExitingN,
+                (State::Inside, Tile::SE) => state = State::ExitingS,
+                (State::Inside, Tile::Ground) => count += 1,
+                (State::EnteringN, Tile::NW) => state = State::Outside,
+                (State::EnteringN, Tile::SW) => state = State::Inside,
+                (State::EnteringS, Tile::NW) => state = State::Inside,
+                (State::EnteringS, Tile::SW) => state = State::Outside,
+                (State::ExitingN, Tile::NW) => state = State::Inside,
+                (State::ExitingN, Tile::SW) => state = State::Outside,
+                (State::ExitingS, Tile::NW) => state = State::Outside,
+                (State::ExitingS, Tile::SW) => state = State::Inside,
+                (_, _) => {},
+            }
+        }
+    }
+
+    count
 }
 
 #[cfg(test)]
@@ -247,14 +294,14 @@ mod tests {
 
     #[test]
     fn part_two_c() {
-        let expected = 0;
+        let expected = 4;
 
         assert_eq!(solve_part_two(INPUT_C), expected);
     }
 
     #[test]
     fn part_two_d() {
-        let expected = 0;
+        let expected = 8;
 
         assert_eq!(solve_part_two(INPUT_D), expected);
     }
